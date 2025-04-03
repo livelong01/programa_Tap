@@ -80,8 +80,4 @@ time.sleep(2)
 selecionar_data(MES_VOLTA, DIA_VOLTA)
 time.sleep(2)
 
-# Fechar o calendário (se necessário)
-botao_confirmar = WebDriverWait(navegador, 10).until(
-    EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Confirmar')]"))  # Ajuste se necessário
-)
 botao_confirmar.click()

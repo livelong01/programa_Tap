@@ -75,11 +75,103 @@ except Exception as e:
 
 
 # Definir datas desejadas
-MES_IDA = "Junho 2024"
+MES_IDA = "junho 2025"
 DIA_IDA = "15"
 
-MES_VOLTA = "Julho 2024"
+MES_VOLTA = "Julho 2025"
 DIA_VOLTA = "5"
+
+#Função para selecionar uma data
+def selecionar_mes(mes_desejado):
+    while True:
+        # Capturar o primeiro mês visível no calendário
+        mes_visivel = WebDriverWait(
+            navegador, 10).until(
+                EC.presence_of_element_located((
+                    By.XPATH,
+                    "//div[@role='presentation' "
+                    "and contains(@class, 'text-sm font-medium')]"))).text
+        print(f"Mês visível: {mes_visivel}")
+        
+        # Verifica se o mês visível é o que queremos
+        if mes_desejado in mes_visivel:
+            break  # Se encontrar, sai do loop
+        
+        # Caso contrário, clica no botão para avançar os meses
+        botao_avancar = WebDriverWait(navegador, 10).until(
+            EC.element_to_be_clickable((By.XPATH,
+                                        "//button[@name='next-month']")))
+        botao_avancar.click()
+        time.sleep(2)  # Pequena pausa para garantir que o calendário carregue
+
+def selecionar_dia_ida(dia_desejado):
+    preco_ida = None  # Variável para armazenar o preço de volta
+    # Esperar até que todos os botões de dia estejam visíveis
+    botoes_dia = WebDriverWait(navegador, 10).until(
+        EC.presence_of_all_elements_located((By.XPATH, "//button[@name='day']"))
+    )
+
+    for botao in botoes_dia:
+        try:
+            # Encontrar o número do dia dentro do botão
+            numero_dia = botao.find_element(By.XPATH, ".//span[1]").text.strip()
+
+            # Encontrar o preço associado (se existir)
+            preco_elemento = botao.find_elements(By.XPATH, ".//span[2]")  
+            preco = preco_elemento[0].text.strip().replace("R$", "").replace("\u00a0", "").replace(",", "") if preco_elemento else "N/A"
+
+            # Verifica se é o dia desejado
+            if numero_dia == str(dia_desejado):
+                print(f"✅ Selecionando o dia {dia_desejado} com preço {preco}")
+                botao.click()
+                break  # Para de procurar após encontrar o dia desejado
+
+        except Exception as e:
+            print(f"Erro ao processar um botão de dia: {e}")
+    return preco_ida
+    
+def selecionar_dia_volta(dia_volta):
+    preco_volta = None  # Variável para armazenar o preço de volta
+    try:
+        # Capturar todos os botões do segundo mês (julho)
+        botoes_dia = WebDriverWait(navegador, 10).until(
+            EC.presence_of_all_elements_located((By.XPATH, "(//button[@name='day'])[position() > last() div 2]"))
+        )
+
+        for botao in botoes_dia:
+            try:
+                # Encontrar o número do dia dentro do botão
+                numero_dia = botao.find_element(By.XPATH, ".//span[1]").text.strip()
+
+                # Encontrar o preço associado (se existir)
+                preco_elemento = botao.find_elements(By.XPATH, ".//span[2]")  
+                preco = preco_elemento[0].text.strip().replace("R$", "").replace("\u00a0", "").replace(",", "") if preco_elemento else "N/A"
+
+                # Se for o dia desejado, salvar a informação (não clicamos)
+                if numero_dia == str(dia_volta):
+                    print(f"✅ Dia {dia_volta} encontrado no segundo mês com preço {preco}")
+                    return {"dia": numero_dia, "preco": preco}  # Retorna os dados
+
+            except Exception as e:
+                print(f"Erro ao processar um botão de dia: {e}")     
+        return preco_volta
+    except Exception as e:
+        print(f"❌ Erro ao tentar capturar os dias do segundo mês: {e}")
+        return None
+
+
+
+# Selecionar a data de ida e volta
+
+
+selecionar_mes(MES_IDA)
+time.sleep(2)
+
+selecionar_dia_ida(MES_IDA)
+selecionar_dia_volta(DIA_VOLTA)
+
+
+
 
 # Tempo para verificar visualmente
 time.sleep(20)
