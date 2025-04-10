@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "../ws-Python"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../Livro - Pense em Python"
+		}
+	],
+	"settings": {
+		"window.zoomLevel": 1,
+		"explorer.compactFolders": false,
+		"terminal.integrated.fontSize": 15,
+		"workbench.colorTheme": "OM Theme (Default Dracula Italic)",
+		"workbench.iconTheme": "material-icon-theme",
+		"terminal.integrated.fontFamily": "monospace",
+		"python.languageServer": "Pylance"
+	}
+}
