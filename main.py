@@ -1,4 +1,4 @@
-import time
+# import time
 import config
 from selenium_helper import (
     iniciar_navegador,
@@ -68,10 +68,10 @@ def executar_busca():
 
 
 if __name__ == "__main__":
-    while True:
-        try:
-            executar_busca()
-            print(f"✅ Busca finalizada! Aguardando {config.TEMPO_EM_HORAS} hora(s) até a próxima execução...\n")
-            time.sleep(config.TEMPO_EM_HORAS * 3600)
-        except Exception as e:
-            print(f"❌ Ocorreu um erro: {e}")
+    # while True:
+    try:
+        executar_busca()
+        print(f"✅ Busca finalizada! Aguardando {config.TEMPO_EM_HORAS} hora(s) até a próxima execução...\n")
+        # time.sleep(config.TEMPO_EM_HORAS * 3600)
+    except Exception as e:
+        print(f"❌ Ocorreu um erro: {e}")
