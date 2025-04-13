@@ -1,7 +1,11 @@
 # config.py
+from dotenv import load_dotenv
+import os
 
-TOKEN_BOT = "7642050445:AAE71v4HmLQJYrmKA8TREzyXHfhV9BgH3KU"
-CHAT_ID = "6439519803"
+load_dotenv()
+# Carregar variáveis de ambiente do arquivo .env
+TOKEN_BOT = os.getenv("TOKEN_BOT")
+CHAT_ID = os.getenv("CHAT_ID")
 
 URL = "https://www.flytap.com/pt-br"
 
@@ -28,11 +32,11 @@ XPATH_BOTAO_PROXIMO = "//button[@name='next-month']"
 
 # datas :
 
-MES_IDA = "julho"
-DIA_IDA = "15"
+MES_IDA = "setembro"
+DIA_IDA = "2"
 
-MES_VOLTA = "agosto"
-DIA_VOLTA = "1"
+MES_VOLTA = "outubro"
+DIA_VOLTA = "2"
 
 # xpaths para os dias
 XPATH_BOTOES_IDA = ("//button[@name='day']")

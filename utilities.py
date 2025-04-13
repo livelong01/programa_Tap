@@ -1,4 +1,6 @@
 #funcao Soma
+from time import sleep
+
 
 def soma(preco_ida, preco_volta):  
     try:
@@ -14,3 +16,7 @@ def soma(preco_ida, preco_volta):
     except ValueError as e:
         print(f"Erro ao converter os preços: {e}")
         return None 
+
+
+def esperar(segundos=2.0):
+    sleep(segundos)

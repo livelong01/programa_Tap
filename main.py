@@ -1,62 +1,77 @@
+import time
+import config
 from selenium_helper import (
     iniciar_navegador,
     esperar_elemento_ID,
     preencher_inputs,
     clicar_botao_calendario,
-    selecionar_mes,
-)
-from scraper import (
-    selecionar_dia,
-)
-import config
-import time
-import soma_preco
+    selecionar_mes)
+from scraper import selecionar_dia
+from utilities import soma, esperar
 from telegram_mybot import enviar_telegram
 
 
-while True:
-    # Iniciar o navegador
-    navegador = iniciar_navegador()
-    navegador.get(config.URL) # Acessar a URL da Tap
-
-    # Aceitar o cookie
+def acessar_site(navegador):
+    navegador.get(config.URL)
     botao_cookie = esperar_elemento_ID(navegador, config.COOKIE)
     botao_cookie.click()
-    time.sleep(2) 
+    esperar()
 
-    # Preencher os campos de origem e destino
+
+def preencher_dados(navegador):
     preencher_inputs(config.ID, config.LOCAL, config.XPATH_LOCAL, navegador)
-    time.sleep(2)
-
-    # Clicar no botão do calendário
+    esperar()
     clicar_botao_calendario(navegador, config.XPATH_BOTAO_CALENDARIO)
-    time.sleep(2)
+    esperar()
+    selecionar_mes(config.MES_IDA, navegador, config.XPATH_MES, config.XPATH_BOTAO_PROXIMO)
 
-    # Econtrar o par de meses correto
-    selecionar_mes(config.MES_IDA, navegador, config.XPATH_MES,
-                   config.XPATH_BOTAO_PROXIMO)    
-    
-    # Selecionar o dia de ida
+
+def buscar_precos(navegador):
     preco_ida = selecionar_dia(navegador, config.DIA_IDA, config.XPATH_BOTOES_IDA, "ida")
-    time.sleep(2)
-    # Selecionar o dia de volta
-    preco_volta = selecionar_dia(navegador, config.DIA_VOLTA, config.XPATH_BOTOES_VOLTA, "volta")
-    time.sleep(2)
+    esperar()
+    if config.MES_IDA != config.MES_VOLTA:
+        preco_volta = selecionar_dia(navegador, config.DIA_VOLTA, config.XPATH_BOTOES_VOLTA, "volta")
+    else:
+        preco_volta = selecionar_dia(navegador, config.DIA_VOLTA, config.XPATH_BOTOES_IDA, "volta")
+    esperar()
+    return soma(preco_ida, preco_volta)
 
-    # somar os preços
-    total = soma_preco.soma(preco_ida, preco_volta)
 
-    # Mensagem para o bot
-    mensagem = mensagem = (
+def enviar_mensagem(total):
+    mensagem = (
         f"🛫 Ida: {config.DIA_IDA}/{config.MES_IDA}\n"
         f"🛬 Volta: {config.DIA_VOLTA}/{config.MES_VOLTA}\n"
         f"💰 Preço Total: R$ {total}"
     )
-    
-    # Enviar mensagem para o Telegram
     enviar_telegram(config.TOKEN_BOT, config.CHAT_ID, mensagem)
 
-    # Fechar o navegador e aguardar o tempo definido
-    navegador.quit()
-    print(f"✅ Busca finalizada! Aguardando {config.TEMPO_EM_HORAS} hora(s) até a próxima execução...\n")
-    time.sleep(config.TEMPO_EM_HORAS * 3600)
+
+total_anterior = 0.0  # variável global para armazenar o preço anterior
+
+
+def executar_busca():
+    global total_anterior  # usar a variável global
+    navegador = iniciar_navegador()
+    total = None
+    try:
+        acessar_site(navegador)
+        preencher_dados(navegador)
+        total = buscar_precos(navegador)
+        if total == total_anterior:
+            print("🔄 O preço não mudou.")
+        else:
+            enviar_mensagem(total)
+            total_anterior = total
+            print("✅ O preço mudou! Mensagem enviada.")     
+    finally:
+        navegador.quit()
+
+
+if __name__ == "__main__":
+    while True:
+        try:
+            executar_busca()
+            print(f"✅ Busca finalizada! Aguardando {config.TEMPO_EM_HORAS} hora(s) até a próxima execução...\n")
+            time.sleep(config.TEMPO_EM_HORAS * 3600)
+        except Exception as e:
+            print(f"❌ Ocorreu um erro: {e}")
