@@ -23,16 +23,22 @@ def preencher_dados(navegador):
     esperar()
     clicar_botao_calendario(navegador, config.XPATH_BOTAO_CALENDARIO)
     esperar()
-    selecionar_mes(config.MES_IDA, navegador, config.XPATH_MES, config.XPATH_BOTAO_PROXIMO)
+    selecionar_mes(config.MES_IDA, navegador, config.XPATH_MES,
+                   config.XPATH_BOTAO_PROXIMO)
 
 
 def buscar_precos(navegador):
-    preco_ida = selecionar_dia(navegador, config.DIA_IDA, config.XPATH_BOTOES_IDA, "ida")
+    preco_ida = selecionar_dia(navegador, config.DIA_IDA,
+                               config.XPATH_BOTOES_IDA, "ida")
     esperar()
     if config.MES_IDA != config.MES_VOLTA:
-        preco_volta = selecionar_dia(navegador, config.DIA_VOLTA, config.XPATH_BOTOES_VOLTA, "volta")
+        preco_volta = selecionar_dia(navegador,
+                                     config.DIA_VOLTA,
+                                     config.XPATH_BOTOES_VOLTA, "volta")
     else:
-        preco_volta = selecionar_dia(navegador, config.DIA_VOLTA, config.XPATH_BOTOES_IDA, "volta")
+        preco_volta = selecionar_dia(navegador, 
+                                     config.DIA_VOLTA, 
+                                     config.XPATH_BOTOES_IDA, "volta")
     esperar()
     return soma(preco_ida, preco_volta)
 
@@ -68,10 +74,11 @@ def executar_busca():
 
 
 if __name__ == "__main__":
-    # while True:
-    try:
-        executar_busca()
-        print(f"✅ Busca finalizada! Aguardando {config.TEMPO_EM_HORAS} hora(s) até a próxima execução...\n")
-        # time.sleep(config.TEMPO_EM_HORAS * 3600)
-    except Exception as e:
-        print(f"❌ Ocorreu um erro: {e}")
+    while True:
+        try:
+            executar_busca()
+            print(f"✅ Busca finalizada! Aguardando {config.TEMPO_EM_HORAS}"
+                  "hora(s) até a próxima execução...\n")
+            esperar(config.TEMPO_EM_HORAS * 3600)
+        except Exception as e:
+            print(f"❌ Ocorreu um erro: {e}")

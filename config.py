@@ -33,14 +33,14 @@ XPATH_BOTAO_PROXIMO = "//button[@name='next-month']"
 # datas :
 
 MES_IDA = "setembro"
-DIA_IDA = "2"
+DIA_IDA = "16"
 
-MES_VOLTA = "outubro"
-DIA_VOLTA = "2"
+MES_VOLTA = "setembro"
+DIA_VOLTA = "30"
 
 # xpaths para os dias
 XPATH_BOTOES_IDA = ("//button[@name='day']")
 XPATH_BOTOES_VOLTA = ("(//button[@name='day'])[position() > last() div 2]")
 
 # tempo de espera em horas
-TEMPO_EM_HORAS = 0.01
+TEMPO_EM_HORAS = 0.5
